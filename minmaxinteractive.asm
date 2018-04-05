@@ -20,7 +20,7 @@
 main: 
         jal input           # jump and link to method input
 
-	    jal output          # jump and link to method output       
+	     jal output          # jump and link to method output       
  
         #  original minmax program from Week 4
                
@@ -40,6 +40,7 @@ loop:   lw $t4,($t0)        # t4 = next element in array
 notMin: ble $t4,$t3,notMax  # if array element is <= max goto notMax
 
         move $t3,$t4        # max = a[i]
+
 notMax: add $t1,$t1,-1      # t1 --  ->  counter --
         add $t0,$t0,4       # increment counter to point to next word
         bnez $t1,loop
