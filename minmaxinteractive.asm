@@ -19,8 +19,9 @@
         .globl main
 main: 
         jal input           # jump and link to method input
-	     jal output          # jump and link to method output       
- 
+        jal output          # jump and link to method output       
+
+
         la $t0,array        # t0 = address of array
         lw $t1,count        # t1 = count, exit loop when it goes to 0
         lw $t2,($t0)        # t2 = min = a[0] (initialization)
@@ -40,7 +41,7 @@ notMin: ble $t4,$t3,notMax  # if array element is <= max goto notMax
 
 notMax: add $t1,$t1,-1      # t1 --  ->  counter --
         add $t0,$t0,4       # increment counter to point to next word
-        bnez $t1,loop
+        bgtz $t1,loop
 
         la $a0,p1           # Display "The minimum number is "
         li $v0,4            # a0 = address of message
@@ -62,7 +63,6 @@ notMax: add $t1,$t1,-1      # t1 --  ->  counter --
         li $v0,4            # a0 = address of message
         syscall             # v0 = 4 which indicates display a string
 
-
         # Continue (y/n)
         # if yes, j main
         # if no, say goodbye and EOP
@@ -80,19 +80,24 @@ input:  # Input subprogram
         syscall
         
         sw $v0,count        # store word in count
-        
         la $t0,array    # initial t0  and t1
         lw $t1,count
         
-inloop: li $v0,5            # use a loop to enter the numbers into the array
+inloop: 
+
+        li $v0,5            # use a loop to enter the numbers into the array
         syscall
         sw $v0,($t0)        
-        add $t1,$t1,-1      # increment the count to keep coun
+        lw $a0,($t0)
+        li $v0, 1
+        syscall
+        sub $t1,$t1,1      # increment the count to keep coun
+        beq $t1,0,endloop    # repeat inloop
         add $t0, $t0, 4
-        beqz $t1,endloop    # repeat inloop
         j inloop    
                
 endloop: 
+        
         la $a0,crlf         # Display "cr/lf"
         li $v0,4            # a0 = address of "crlf"
         syscall             # v0 = 4 which indicates display a string
