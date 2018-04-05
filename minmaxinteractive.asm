@@ -29,20 +29,22 @@ main:
         add $t0,$t0,4       # move pointer ahead to next array element a[1]
         add $t1,$t1,-1      # decrement counter to keep in step with array
 
-loop:   lw $t4,($t0)        # t4 = next element in array
+loop:   
+        lw $t4,($t0)        # t4 = next element in array
         bge $t4,$t2,notMin  # if array element is  >= min goto notMin
 
         move $t2,$t4        # min = a[i]
         j notMax
 
-notMin: ble $t4,$t3,notMax  # if array element is <= max goto notMax
-
+notMin:
+        ble $t4,$t3,notMax  # if array element is <= max goto notMax
         move $t3,$t4        # max = a[i]
 
-notMax: add $t1,$t1,-1      # t1 --  ->  counter --
+notMax: 
+        add $t1,$t1,-1      # t1 --  ->  counter --
         add $t0,$t0,4       # increment counter to point to next word
         bgtz $t1,loop
-
+        
         la $a0,p1           # Display "The minimum number is "
         li $v0,4            # a0 = address of message
         syscall             # v0 = 4 which indicates display a string	
@@ -67,32 +69,35 @@ notMax: add $t1,$t1,-1      # t1 --  ->  counter --
         # if yes, j main
         # if no, say goodbye and EOP
         
-EOP:    li $v0,10
+EOP:   
+        li $v0,10
         syscall
 
 input:  # Input subprogram
 
-        la $a0, p3     # ask for the number of numbers    
+        la $a0, p3          # ask for the number of numbers    
         li $v0,4
         syscall
-               
+
         li $v0,5            # in put that number
         syscall
         
         sw $v0,count        # store word in count
-        la $t0,array    # initial t0  and t1
+        la $t0,array        # initial t0  and t1
         lw $t1,count
         
 inloop: 
 
+        beq $t1,0,endloop    # repeat inloop
         li $v0,5            # use a loop to enter the numbers into the array
         syscall
         sw $v0,($t0)        
-        lw $a0,($t0)
+
+        lw $a0,($t0)        # output array for debug
         li $v0, 1
         syscall
+
         sub $t1,$t1,1      # increment the count to keep coun
-        beq $t1,0,endloop    # repeat inloop
         add $t0, $t0, 4
         j inloop    
                
