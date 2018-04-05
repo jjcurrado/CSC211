@@ -16,14 +16,11 @@
 ##################################################
 
         .text
-        .main
+        .globl main
 main: 
         jal input           # jump and link to method input
-
 	     jal output          # jump and link to method output       
  
-        #  original minmax program from Week 4
-               
         la $t0,array        # t0 = address of array
         lw $t1,count        # t1 = count, exit loop when it goes to 0
         lw $t2,($t0)        # t2 = min = a[0] (initialization)
@@ -65,7 +62,6 @@ notMax: add $t1,$t1,-1      # t1 --  ->  counter --
         li $v0,4            # a0 = address of message
         syscall             # v0 = 4 which indicates display a string
 
-        # End of original minmax from Week 4
 
         # Continue (y/n)
         # if yes, j main
@@ -76,7 +72,7 @@ EOP:    li $v0,10
 
 input:  # Input subprogram
 
-        la $t0,prompt3     # ask for the number of numbers    
+        la $a0, p3     # ask for the number of numbers    
         li $v0,4
         syscall
                
@@ -85,13 +81,14 @@ input:  # Input subprogram
         
         sw $v0,count        # store word in count
         
-        la $v0,$t0,array    # initial t0  and t1
+        la $t0,array    # initial t0  and t1
         lw $t1,count
         
 inloop: li $v0,5            # use a loop to enter the numbers into the array
         syscall
         sw $v0,($t0)        
         add $t1,$t1,-1      # increment the count to keep coun
+        add $t0, $t0, 4
         beqz $t1,endloop    # repeat inloop
         j inloop    
                
@@ -106,29 +103,46 @@ output: # Output subprogram:
         # Algorithm and student completes the instructions
         
         # initialize t0 and t1 as was done in input
-        
+                        
+        la $t0,array        # t0 = address of array
+        lw $t1,count        # t1 = count, exit loop when it goes to 0
+       
         # load a number from the array and display that number
-        
+        lw $t2, ($t0)  
+        move $a0, $t2
+
+        li $v0, 1
+        syscall
+
+
         # skip a space
+        la $a0, space
+        li $v0, 4
+        syscall              # skip a space
         
         # t0=t0+4
-        
+        add $t0, $t0, 4
+
         # t1=t1-1
-        
+        add $t0, $t0, -1
+
         # if t1=0 endoutloop
-        
+        beqz $t1, endoutloop
+        j output
+
 endoutloop:
         # return to instruction after instruction jal output
-
+        jr $ra
         
 
         .data
 array:  .space 100
+space:  .asciiz " "
 count:  .word 0
 p1:     .asciiz "The minimum number is "
 p2:     .asciiz "\nThe maximum number is "
-p3:                         # student create
-p4:                         # student create
+p3:     .asciiz "\nHow many numbers would you like to enter?: "
+#p4:                         # student create
 crlf:   .asciiz "\n"
 
 ################ Output ###################
