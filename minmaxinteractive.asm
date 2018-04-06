@@ -65,10 +65,18 @@ notMax:
         li $v0,4            # a0 = address of message
         syscall             # v0 = 4 which indicates display a string
 
-        # Continue (y/n)
-        # if yes, j main
-        # if no, say goodbye and EOP
-        
+       la $a0, p4           # Would you like to try again?
+       la $v0, 4
+       syscall
+
+       la $a0, input
+       li $a1, 4
+       li $v0, 8
+       syscall
+
+       lb $s0, choice
+       li $s1, 'y'
+       beq $s0, $s1, main
 EOP:   
         li $v0,10
         syscall
@@ -152,8 +160,9 @@ count:  .word 0
 p1:     .asciiz "The minimum number is "
 p2:     .asciiz "\nThe maximum number is "
 p3:     .asciiz "\nHow many numbers would you like to enter?: "
-#p4:                         # student create
+p4:     .asciiz "\nWould you like to continue (y,n)?"                        # student create
 crlf:   .asciiz "\n"
+input:  .space  4 
 
 ################ Output ###################
 #                                         #
