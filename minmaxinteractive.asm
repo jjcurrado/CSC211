@@ -18,6 +18,7 @@
         .text
         .globl main
 main: 
+
         jal input           # jump and link to method input
         jal output          # jump and link to method output       
 
@@ -69,12 +70,12 @@ notMax:
        la $v0, 4
        syscall
 
-       la $a0, input
+       la $a0, in
        li $a1, 4
        li $v0, 8
        syscall
 
-       lb $s0, choice
+       lb $s0, in
        li $s1, 'y'
        beq $s0, $s1, main
 EOP:   
@@ -87,7 +88,7 @@ input:  # Input subprogram
         li $v0,4
         syscall
 
-        li $v0,5            # in put that number
+        li $v0,5            # input that number
         syscall
         
         sw $v0,count        # store word in count
@@ -96,17 +97,15 @@ input:  # Input subprogram
         
 inloop: 
 
-        beq $t1,0,endloop    # repeat inloop
+        beqz $t1,endloop    # if count has reached 0 end loop
+
         li $v0,5            # use a loop to enter the numbers into the array
         syscall
-        sw $v0,($t0)        
+        sw $v0,($t0)        # store input into current address of array 
 
-        lw $a0,($t0)        # output array for debug
-        li $v0, 1
-        syscall
+        addi $t1,$t1,-1      # decrement the count 
+        addi $t0, $t0, 4    # move to next address
 
-        sub $t1,$t1,1      # increment the count to keep coun
-        add $t0, $t0, 4
         j inloop    
                
 endloop: 
@@ -124,7 +123,11 @@ output: # Output subprogram:
                         
         la $t0,array        # t0 = address of array
         lw $t1,count        # t1 = count, exit loop when it goes to 0
-       
+
+outputloop:
+
+        beqz $t1, endoutloop
+
         # load a number from the array and display that number
         lw $t2, ($t0)  
         move $a0, $t2
@@ -132,43 +135,75 @@ output: # Output subprogram:
         li $v0, 1
         syscall
 
-
         # skip a space
         la $a0, space
         li $v0, 4
         syscall              # skip a space
         
         # t0=t0+4
-        add $t0, $t0, 4
+        addi $t0, $t0, 4
 
         # t1=t1-1
-        add $t0, $t0, -1
+        addi $t1, $t1, -1
 
         # if t1=0 endoutloop
-        beqz $t1, endoutloop
-        j output
+        j outputloop
 
 endoutloop:
+
+        la $a0,crlf         # Display "cr/lf"
+        li $v0,4            # a0 = address of message
+        syscall             # v0 = 4 which indicates display a string
+
         # return to instruction after instruction jal output
         jr $ra
         
 
         .data
-array:  .space 100
-space:  .asciiz " "
+array:  .space 400
+space:  .asciiz "   "
 count:  .word 0
 p1:     .asciiz "The minimum number is "
 p2:     .asciiz "\nThe maximum number is "
 p3:     .asciiz "\nHow many numbers would you like to enter?: "
 p4:     .asciiz "\nWould you like to continue (y,n)?"                        # student create
 crlf:   .asciiz "\n"
-input:  .space  4 
+in:  .space  4 
 
 ################ Output ###################
-#                                         #
-# There may be errors for you to correct. #
-# This is due at next class day.          #
-# 3 sample runs go here.                  #
-#                                         #
-###########################################
+#                                         
+# 1 How many numbers would you like to enter?: 3
+#  2 1
+#  3 2
+#  4 3
+#  5
+#  6 1   2   3
+#  7 The minimum number is 1
+#  8 The maximum number is 3
+#  9
+# 10 Would you like to continue (y,n)?y
+# 11
+# 12 How many numbers would you like to enter?: 4
+# 13 -1
+# 14 2
+# 15 49
+# 16 100
+# 17
+# 18 -1   2   49   100
+# 19 The minimum number is -1
+# 20 The maximum number is 100
+# 21
+# 22 Would you like to continue (y,n)?y
+# 23
+# 24 How many numbers would you like to enter?: 2
+# 25 100
+# 26 100000
+# 27
+# 28 100   100000
+# 29 The minimum number is 100
+# 30 The maximum number is 100000
+# 31
+# 32 Would you like to continue (y,n)?n
+#                                         
+#################################################
 
