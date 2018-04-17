@@ -1,8 +1,8 @@
 ########### hex.asm on p. 76-78 #############
        .text
-       .globl __start
+       .globl main
 
-__start:
+main:
         la $a0,prompt   # display prompt on terminal
         li $v0,4
         syscall
