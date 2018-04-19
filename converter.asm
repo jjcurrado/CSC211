@@ -184,3 +184,22 @@ again:.asciiz "Would you like to try again(y,n)?"
 endl: .asciiz "\n"
 ending:.asciiz"Ending...:"
 result:.space 8
+
+#              Output
+#
+#  Please insert value (positive numbers only) : 1234
+#  Please insert the base value(2 to 16): 16
+#  
+#  Result : 4D2
+#  Would you like to try again(y,n)?y
+#  Please insert value (positive numbers only) : 25
+#  Please insert the base value(2 to 16): 2
+#  
+#  Result : 11001
+#  Would you like to try again(y,n)?y
+#  Please insert value (positive numbers only) : 98
+#  Please insert the base value(2 to 16): 4
+#  
+#  Result : 1202
+#  Would you like to try again(y,n)?n
+#  Ending...:
