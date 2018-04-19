@@ -16,7 +16,7 @@
 main:
 
       li $s0, 2            #minimum base
-      li $s1, 10           #maximum base
+      li $s1, 16           #maximum base
 
       jal getA             #input number
       jal getB             #input base
@@ -151,7 +151,20 @@ convert:
 
       beqz $s3,done
       lw $a0,16($sp)
+      bgt $a0, 9, printascii
+
       li $v0,1
+      syscall
+      j done
+
+printascii:
+      move $t0, $a0
+      and $t0, $t0, 0xf
+      add $t0, $t0, 55
+      la $t1, result
+      sb $t0, ($t1) 
+      move $a0, $t1
+      li $v0, 4
       syscall
 
 done: 
@@ -164,9 +177,10 @@ done:
 
 .data
 msg1: .asciiz "Please insert value (positive numbers only) : "
-msg2: .asciiz "Please insert the base value(2 to 10): "
+msg2: .asciiz "Please insert the base value(2 to 16): "
 msg3: .asciiz "\nResult : "
 choice:.space 4
 again:.asciiz "Would you like to try again(y,n)?"
 endl: .asciiz "\n"
 ending:.asciiz"Ending...:"
+result:.space 8
